@@ -2,52 +2,15 @@
 import pandas as pd
 import re
 import math
-
-
-# Scaled to [0,1] by dividing by the max
-# TODO: Change to use min/max scaler
-def scale_loan_amount(s):
-    return s/300000.0
-
-
-def catch_nan(s):
-    return type(s) == str or not math.isnan(s)
-
-
-# REMOVE % sign from Debt to Income Ratio (rejected) and scale (assume range of 0-100%)
-def format_dti(dti):
-    if type(dti) == float:
-        return dti/100
-    return float(dti[:-1])/100
-
-
-# Assumes the string contains a single integer at some point
-# Extract int using regular expression, scale it to [0,1]
-# TODO: try one-hot encoding
-def parse_employment_length(s):
-    if '<' in s:
-        return 0.5/10
-    return float(re.search(r'\d+', s).group())/10
-
-
-# Change Loan Title strings to match accepted categories
-# Rejects: Business Loan -> Business
-#           other -> Other
-def format_title(title):
-    if title == 'Business Loan':
-        return 'Business'
-    if title == 'other':
-        return 'Other'
-    return title
+from definitions import ROOT_DIR
 
 
 def get_data():
     # Read the data into pandas df
-    accepted = pd.read_csv('LoanStats_2018Q1.csv', skiprows = 1, header=0)
+    accepted = pd.read_csv(ROOT_DIR + '/data/LoanStats_2018Q1.csv', skiprows = 1, header=0)
+    rejected = pd.read_csv(ROOT_DIR + '/data/RejectStats_2018Q1.csv', skiprows = 1, header=0)
 
-    rejected = pd.read_csv('RejectStats_2018Q1.csv', skiprows = 1, header=0)
-
-    # Found using set difference
+    # Variables we will use as inputs, found using set difference
     accepted_col_list = ['loan_amnt', 'title', 'dti', 'emp_length']
     rejected_col_list = ['Amount Requested', 'Loan Title', 'Debt-To-Income Ratio', 'Employment Length']
 
@@ -59,6 +22,7 @@ def get_data():
     # Drop dummy/invalid rows
     accepted.drop(accepted.tail(2).index,inplace=True)
     accepted = accepted.loc[accepted.emp_length > 0]
+    accepted = accepted.loc[accepted.dti > 0]
     rejected = rejected.loc[rejected.emp_length > 0]
 
     rejected.title = rejected.title.apply(format_title)
@@ -89,4 +53,40 @@ def get_data():
     X = all_loans.loc[:, all_loans.columns != 'accepted'].values
     Y = all_loans.loc[:, all_loans.columns == 'accepted'].values
 
-    return X,Y
+    return X, Y
+
+
+# Scaled to [0,1] by dividing by the max
+# TODO: Change to use min/max scaler
+def scale_loan_amount(s):
+    return s/300000.0
+
+
+def catch_nan(s):
+    return type(s) == str or not math.isnan(s)
+
+
+# Remove % sign from Debt to Income Ratio (rejected) and scale (assume range of 0-100%)
+def format_dti(dti):
+    if type(dti) == float:
+        return dti/100
+    return float(dti[:-1])/100
+
+
+# Assumes the string contains a single integer at some point
+# Extract int using regular expression, scale it to [0,1]
+# TODO: try one-hot encoding
+def parse_employment_length(s):
+    if '<' in s:
+        return 0.5/10
+    return float(re.search(r'\d+', s).group())/10
+
+
+# Change Loan Title strings to match accepted categories
+# Rejects: Business Loan -> Business, other -> Other
+def format_title(title):
+    if title == 'Business Loan':
+        return 'Business'
+    if title == 'other':
+        return 'Other'
+    return title
