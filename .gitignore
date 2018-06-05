@@ -1,4 +1,5 @@
 pip-selfcheck.json
+**/*.pyc
 *.csv
 .Python
 **/bin
