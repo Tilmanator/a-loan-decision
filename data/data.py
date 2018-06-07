@@ -5,7 +5,7 @@ import math
 from definitions import ROOT_DIR
 
 
-def get_data():
+def get_data(get_feature_names=False):
     # Read the data into pandas df
     accepted = pd.read_csv(ROOT_DIR + '/data/LoanStats_2018Q1.csv', skiprows = 1, header=0)
     rejected = pd.read_csv(ROOT_DIR + '/data/RejectStats_2018Q1.csv', skiprows = 1, header=0)
@@ -53,6 +53,8 @@ def get_data():
     X = all_loans.loc[:, all_loans.columns != 'accepted'].values
     Y = all_loans.loc[:, all_loans.columns == 'accepted'].values
 
+    if get_feature_names:
+        return X, Y, all_loans.columns.values
     return X, Y
 
 
@@ -85,6 +87,8 @@ def parse_employment_length(s):
 # Change Loan Title strings to match accepted categories
 # Rejects: Business Loan -> Business, other -> Other
 def format_title(title):
+    if type(title) != str:
+        raise TypeError("Title must be a string")
     if title == 'Business Loan':
         return 'Business'
     if title == 'other':
