@@ -64,14 +64,14 @@ def scale_loan_amount(s):
     return s/300000.0
 
 
-def catch_nan(s):
+def not_nan(s):
     return type(s) == str or not math.isnan(s)
 
 
 # Remove % sign from Debt to Income Ratio (rejected) and scale (assume range of 0-100%)
 def format_dti(dti):
-    if type(dti) == float:
-        return dti/100
+    if type(dti) == float or type(dti) == int:
+        return dti/100.0
     return float(dti[:-1])/100
 
 

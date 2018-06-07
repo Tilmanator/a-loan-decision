@@ -1,4 +1,5 @@
 pip-selfcheck.json
+**/.pytest_cache
 **/*.pyc
 *.csv
 .Python
