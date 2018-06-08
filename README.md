@@ -21,7 +21,6 @@ Current (handpicked) metrics:
 
 Achieving consistent 93% - 95% accuracy on test set, the Random Forest (mostly) sees employment length as the most important feature
 
-
 ## The Data
 Lending Club, 2018 Q1
 [Download files from here](https://www.lendingclub.com/info/download-data.action)
@@ -34,8 +33,28 @@ curl https://resources.lendingclub.com/LoanStats_2018Q1.csv.zip -o LoanStats_201
 curl https://resources.lendingclub.com/RejectStats_2018Q1.csv.zip -o RejectStats_2018Q1.csv.zip
 ```
 
+## Further setup
+From root directory,
+```bash
+make
+```
+This will install the required packages.
+You can now run
+```bash
+python run.py
+```
+or to see what arguments can be passed in:
+```bash
+python run.py -h
+```
+
 ## Testing
 Testing in test directory. Set up Travis in future, for now from root directory:
+```bash
+make test
+```
+or
+
 ```bash
 pytest
 ```
