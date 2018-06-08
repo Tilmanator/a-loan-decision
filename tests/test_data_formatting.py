@@ -1,5 +1,4 @@
-from data import data
-import models
+from context import data
 
 
 def test_format_title_simple():

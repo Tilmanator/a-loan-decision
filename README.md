@@ -37,5 +37,5 @@ curl https://resources.lendingclub.com/RejectStats_2018Q1.csv.zip -o RejectStats
 ## Testing
 Testing in test directory. Set up Travis in future, for now from root directory:
 ```bash
-python -m pytest test/
+pytest
 ```
